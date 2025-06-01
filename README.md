@@ -1,92 +1,95 @@
-# Gemini Search
+# Sympalyze – Healthcare Meets AI  
 
-A Perplexity-style search engine powered by Google's Gemini 2.0 Flash model with grounding through Google Search. Get AI-powered answers to your questions with real-time web sources and citations.
+Sympalyze is an AI-powered medical information assistant that delivers concise, cited answers to health-related questions.  
+Built on Google Gemini with real-time web search, Sympalyze augments traditional symptom checkers with conversational search, image analysis, and evidence-based sourcing.
 
-Created by [@ammaar](https://x.com/ammaar)
+---
 
-![Kapture 2025-01-04 at 14 35 14](https://github.com/user-attachments/assets/2302898e-03ae-40a6-a16c-301d6b91c5af)
+## ✨ Key Features
 
+- **Conversational Healthcare Search**  
+  Ask any medical question in plain language and receive an organized, readable answer with reputable citations.
 
-## Features
+- **Symptom Selector**  
+  Quickly add one or more symptoms from a searchable catalogue (e.g. *Fever*, *Fatigue*, *Chest pain*) to refine your query.
 
-- 🔍 Real-time web search integration
-- 🤖 Powered by Google's latest Gemini 2.0 Flash model
-- 📚 Source citations and references for answers
-- 💬 Follow-up questions in the same chat session
-- 🎨 Clean, modern UI inspired by Perplexity
-- ⚡ Fast response times
+- **Image Attachment & Analysis**  
+  Upload photos, X-rays, lab reports, or documents for additional context. Images are processed by the model to improve response relevance.  
+
+- **Follow-Up Questions**  
+  Continue the conversation without losing context; each follow-up is answered in the same session.
+
+- **Source Badges & Citations**  
+  Responses reference trusted medical sources such as MedlinePlus, Mayo Clinic, WebMD, Cleveland Clinic, NIH and more.
+
+- **Built-in Medical Disclaimer**  
+  Every answer reminds users that Sympalyze is **not** a substitute for professional medical advice.
+
+---
 
 ## Tech Stack
 
-- Frontend: React + Vite + TypeScript + Tailwind CSS
-- Backend: Express.js + TypeScript
-- AI: Google Gemini 2.0 Flash API
-- Search: Google Search API integration
+| Layer      | Technology |
+|------------|------------|
+| **Frontend** | React + Vite · TypeScript · Tailwind CSS (shadcn/ui) |
+| **Backend**  | Express.js · TypeScript |
+| **AI / Search** | Google Gemini 2.0 Flash · Google Web Search Tool |
+| **State & Data** | @tanstack/react-query · Drizzle ORM |
 
-## Setup
+---
+
+## Quick Start
 
 ### Prerequisites
-
-- Node.js (v18 or higher recommended)
-- npm or yarn
-- A Google API key with access to Gemini API
+- Node .js ≥ 18
+- A Google API Key with Gemini access
 
 ### Installation
+```bash
+git clone https://github.com/your-org/Sympalyze.git
+cd Sympalyze
+npm install
+```
 
-1. Clone the repository:
+Create a `.env` file in the project root:
 
-   ```bash
-   git clone https://github.com/ammaarreshi/Gemini-Search.git
-   cd Gemini-Search
-   ```
+```
+GOOGLE_API_KEY=your_google_api_key
+```
 
-2. Install dependencies:
+### Run in Development
+```bash
+npm run dev
+```
+Open `http://localhost:3000` in your browser.
 
-   ```bash
-   npm install
-   ```
+### Production Build
+```bash
+npm run build
+npm run start
+```
 
-3. Create a `.env` file in the root directory:
-
-   ```
-   GOOGLE_API_KEY=your_api_key_here
-   ```
-
-4. Start the development server:
-
-   ```bash
-   npm run dev
-   ```
-
-5. Open your browser and navigate to:
-   ```
-   http://localhost:3000
-   ```
+---
 
 ## Environment Variables
 
-- `GOOGLE_API_KEY`: Your Google API key with access to Gemini API
-- `NODE_ENV`: Set to "development" by default, use "production" for production builds
+| Variable | Description |
+|----------|-------------|
+| `GOOGLE_API_KEY` | Your Google Cloud API key with Gemini enabled |
+| `NODE_ENV` | `development` (default) or `production` |
 
-## Development
-
-- `npm run dev`: Start the development server
-- `npm run build`: Build for production
-- `npm run start`: Run the production server
-- `npm run check`: Run TypeScript type checking
+---
 
 ## Security Notes
+- **Never** commit `.env` or expose API keys publicly.
+- Review and comply with local regulations before deploying healthcare software.
 
-- Never commit your `.env` file or expose your API keys
-- The `.gitignore` file is configured to exclude sensitive files
-- If you fork this repository, make sure to use your own API keys
+---
 
 ## License
+This project is licensed under the MIT License.
 
-MIT License - feel free to use this code for your own projects!
+---
 
-## Acknowledgments
-
-- Inspired by [Perplexity](https://www.perplexity.ai/)
-- Built with [Google's Gemini API](https://ai.google.dev/)
-- UI components from [shadcn/ui](https://ui.shadcn.com/)
+### Disclaimer  
+Sympalyze provides information **for educational purposes only** and is **not** a substitute for professional medical advice, diagnosis, or treatment. Always consult a qualified healthcare provider with any questions regarding a medical condition.

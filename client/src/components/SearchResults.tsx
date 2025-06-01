@@ -46,19 +46,24 @@ export function SearchResults({
 
   if (isLoading) {
     return (
-      <div className="space-y-4 animate-in fade-in-50">
+      <div className="space-y-6 animate-in fade-in-50">
         <div className="flex justify-center mb-8">
-          <Logo animate className="w-12 h-12" />
+          <Logo animate className="w-16 h-16" />
         </div>
-        <Card className="p-6">
-          <Skeleton className="h-4 w-3/4 mb-4" />
+        <Card className="p-6 shadow-md border border-border">
+          <Skeleton className="h-6 w-3/4 mb-4" />
+          <Skeleton className="h-4 w-full mb-2" />
           <Skeleton className="h-4 w-full mb-2" />
           <Skeleton className="h-4 w-full mb-2" />
           <Skeleton className="h-4 w-2/3" />
         </Card>
         <div className="space-y-2">
-          <Skeleton className="h-[100px] w-full" />
-          <Skeleton className="h-[100px] w-full" />
+          <Skeleton className="h-[40px] w-full rounded-full" />
+          <div className="flex flex-wrap gap-2">
+            <Skeleton className="h-8 w-24 rounded-full" />
+            <Skeleton className="h-8 w-28 rounded-full" />
+            <Skeleton className="h-8 w-20 rounded-full" />
+          </div>
         </div>
       </div>
     );
@@ -85,7 +90,7 @@ export function SearchResults({
         )}
         <div className="flex flex-col sm:flex-row sm:items-baseline gap-2 text-sm sm:text-base text-muted-foreground">
           <span>{isFollowUp ? 'Follow-up question:' : ''}</span>
-          <h1 className="font-serif text-lg sm:text-3xl text-foreground">"{query}"</h1>
+          <h1 className="text-lg sm:text-3xl text-foreground font-medium">{query}</h1>
         </div>
       </motion.div>
 
@@ -101,25 +106,27 @@ export function SearchResults({
       )}
 
       {/* Main Content */}
-      <Card className="overflow-hidden shadow-md">
+      <Card className="overflow-hidden shadow-md border border-border">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3, duration: 0.4 }}
-          className="py-4 px-8"
+          className="py-6 px-8"
         >
           <div
             className={cn(
               "prose prose-slate max-w-none",
               "dark:prose-invert",
-              "prose-headings:font-bold prose-headings:mb-4",
-              "prose-h2:text-2xl prose-h2:mt-8 prose-h2:border-b prose-h2:pb-2 prose-h2:border-border",
-              "prose-h3:text-xl prose-h3:mt-6",
-              "prose-p:text-base prose-p:leading-7 prose-p:my-4",
-              "prose-ul:my-6 prose-ul:list-disc prose-ul:pl-6",
-              "prose-li:my-2 prose-li:marker:text-muted-foreground",
-              "prose-strong:font-semibold",
+              "prose-headings:font-semibold prose-headings:mb-4 prose-headings:text-primary",
+              "prose-h2:text-xl prose-h2:mt-6 prose-h2:pb-2",
+              "prose-h3:text-lg prose-h3:mt-5",
+              "prose-p:text-base prose-p:leading-7 prose-p:my-3",
+              "prose-ul:my-4 prose-ul:list-disc prose-ul:pl-6",
+              "prose-li:my-1 prose-li:marker:text-primary",
+              "prose-strong:font-semibold prose-strong:text-foreground",
               "prose-a:text-primary prose-a:no-underline hover:prose-a:text-primary/80",
+              "prose-hr:my-6 prose-hr:border-border",
+              "prose-blockquote:border-l-4 prose-blockquote:border-primary/30 prose-blockquote:pl-4 prose-blockquote:italic prose-blockquote:text-muted-foreground"
             )}
             dangerouslySetInnerHTML={{ 
               __html: results.summary

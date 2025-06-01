@@ -1,28 +1,33 @@
 {
-  "name": "Gemini Search",
-  "short_name": "Gemini",
-  "description": "A search engine powered by Google's Gemini Flash",
+  "name": "Sympalyze",
+  "short_name": "Sympalyze",
+  "description": "Healthcare meets AI - Get accurate medical information and symptom analysis",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#FCFCF9",
-  "theme_color": "#FCFCF9",
-  "orientation": "portrait",
+  "background_color": "#3b82f6",
+  "theme_color": "#3b82f6",
+  "orientation": "portrait-primary",
   "icons": [
     {
       "src": "/favicon.png",
-      "sizes": "32x32",
+      "sizes": "192x192",
       "type": "image/png"
     },
     {
       "src": "/apple-touch-icon.png",
-      "sizes": "180x180",
-      "type": "image/png"
-    },
-    {
-      "src": "/pwa-512x512.png",
       "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
+      "type": "image/png"
     }
-  ]
-} 
+  ],
+  "shortcuts": [
+    {
+      "name": "Ask Medical Question",
+      "short_name": "Ask",
+      "description": "Ask a medical question",
+      "url": "/"
+    }
+  ],
+  "categories": ["healthcare", "medical", "health", "education"],
+  "screenshots": [],
+  "related_applications": []
+}

@@ -10,14 +10,35 @@ import { setupEnvironment } from "./env";
 
 const env = setupEnvironment();
 const genAI = new GoogleGenerativeAI(env.GOOGLE_API_KEY);
+
+// Healthcare-specific system prompt
+const HEALTHCARE_SYSTEM_PROMPT = `
+You are Sympalyze, an AI assistant specialized in providing healthcare information. 
+Your purpose is to help users understand medical topics, symptoms, conditions, and treatments.
+
+Guidelines:
+1. Provide accurate, evidence-based medical information from reputable sources.
+2. Always include appropriate medical disclaimers in your responses.
+3. Clearly state when information is general and when a user should consult a healthcare professional.
+4. For urgent or emergency symptoms, emphasize the importance of seeking immediate medical attention.
+5. Avoid making definitive diagnoses - instead, discuss possibilities and explain when professional evaluation is needed.
+6. Present information in a clear, organized manner that's accessible to non-medical professionals.
+7. When discussing treatments, include standard approaches supported by medical evidence.
+8. Cite reputable medical sources when possible (Mayo Clinic, Cleveland Clinic, MedlinePlus, etc.).
+
+Important: Always include a disclaimer that your information is for educational purposes only and not a substitute for professional medical advice, diagnosis, or treatment.
+`;
+
+// Configure the model with healthcare focus
 const model = genAI.getGenerativeModel({
   model: "gemini-2.0-flash-exp",
   generationConfig: {
-    temperature: 0.9,
-    topP: 1,
-    topK: 1,
+    temperature: 0.7, // Slightly reduced for more factual responses
+    topP: 0.95,
+    topK: 40,
     maxOutputTokens: 2048,
   },
+  systemInstruction: HEALTHCARE_SYSTEM_PROMPT,
 });
 
 // Store chat sessions in memory
@@ -35,18 +56,18 @@ async function formatResponseToMarkdown(
 
   // Process main sections (lines that start with word(s) followed by colon)
   processedText = processedText.replace(
-    /^([A-Za-z][A-Za-z\s]+):(\s*)/gm,
+    /^([A-Za-z][A-Za-z\s]+):(\\s*)/gm,
     "## $1$2"
   );
 
   // Process sub-sections (any remaining word(s) followed by colon within text)
   processedText = processedText.replace(
-    /(?<=\n|^)([A-Za-z][A-Za-z\s]+):(?!\d)/gm,
+    /(?<=\\n|^)([A-Za-z][A-Za-z\\s]+):(?!\\d)/gm,
     "### $1"
   );
 
   // Process bullet points
-  processedText = processedText.replace(/^[•●○]\s*/gm, "* ");
+  processedText = processedText.replace(/^[•●○]\\s*/gm, "* ");
 
   // Split into paragraphs
   const paragraphs = processedText.split("\n\n").filter(Boolean);
@@ -63,6 +84,15 @@ async function formatResponseToMarkdown(
     })
     .join("\n\n");
 
+  // Add medical disclaimer if not already present
+  const disclaimer = "\n\n---\n\n*Disclaimer: This information is for educational purposes only and is not a substitute for professional medical advice, diagnosis, or treatment. Always seek the advice of your physician or other qualified health provider with any questions you may have regarding a medical condition.*";
+  
+  const hasDisclaimer = formatted.toLowerCase().includes("disclaimer") || 
+                        formatted.toLowerCase().includes("not a substitute") ||
+                        formatted.toLowerCase().includes("consult");
+                        
+  const finalText = hasDisclaimer ? formatted : formatted + disclaimer;
+
   // Configure marked options for better header rendering
   marked.setOptions({
     gfm: true,
@@ -70,7 +100,7 @@ async function formatResponseToMarkdown(
   });
 
   // Convert markdown to HTML using marked
-  return marked.parse(formatted);
+  return marked.parse(finalText);
 }
 
 interface WebSource {
@@ -113,6 +143,15 @@ export function registerRoutes(app: Express): Server {
         });
       }
 
+      // Enhance query with healthcare context if not already present
+      const enhancedQuery = `
+Please provide healthcare information about the following query. 
+Focus on medical accuracy and include relevant health information from reputable sources.
+If this appears to be about symptoms, explain possible causes, when to seek medical attention, and general treatment approaches.
+
+Query: ${query}
+      `;
+
       // Create a new chat session with search capability
       const chat = model.startChat({
         tools: [
@@ -124,7 +163,7 @@ export function registerRoutes(app: Express): Server {
       });
 
       // Generate content with search tool
-      const result = await chat.sendMessage(query);
+      const result = await chat.sendMessage(enhancedQuery);
       const response = await result.response;
       console.log(
         "Raw Google API Response:",
@@ -215,8 +254,16 @@ export function registerRoutes(app: Express): Server {
         });
       }
 
+      // Enhance follow-up query with healthcare context reminder
+      const enhancedQuery = `
+This is a follow-up question to our previous healthcare discussion. 
+Please continue to provide medically accurate information from reputable sources:
+
+${query}
+      `;
+
       // Send follow-up message in existing chat
-      const result = await chat.sendMessage(query);
+      const result = await chat.sendMessage(enhancedQuery);
       const response = await result.response;
       console.log(
         "Raw Google API Follow-up Response:",
