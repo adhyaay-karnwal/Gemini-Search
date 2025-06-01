@@ -1,24 +1,51 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation } from 'wouter';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { Logo } from '@/components/Logo';
 import { MedicalSearchInput } from '@/components/MedicalSearchInput';
 import { MedicalDisclaimer } from '@/components/MedicalDisclaimer';
+import { useConversations } from '@/context/ConversationsProvider';
 
 export function Home() {
   const [, setLocation] = useLocation();
   const [selectedSymptoms, setSelectedSymptoms] = useState<string[]>([]);
   const [attachedImage, setAttachedImage] = useState<File | null>(null);
+  const { createNewConversation } = useConversations();
+
+  // Load symptoms from sessionStorage if available
+  useEffect(() => {
+    const storedSymptoms = sessionStorage.getItem('selectedSymptoms');
+    if (storedSymptoms) {
+      try {
+        const symptoms = JSON.parse(storedSymptoms);
+        setSelectedSymptoms(symptoms);
+      } catch (error) {
+        console.error('Error parsing stored symptoms:', error);
+      }
+    }
+  }, []);
 
   const handleSearch = (query: string, symptoms: string[], image: File | null) => {
     if (query.trim()) {
-      // Store symptoms and image in sessionStorage to persist across navigation
-      if (symptoms.length > 0) {
-        sessionStorage.setItem('selectedSymptoms', JSON.stringify(symptoms));
+      // Convert image to base64 if present
+      if (image) {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          // Create a new conversation with the query, symptoms, and image
+          const imageBase64 = reader.result as string;
+          const conversation = createNewConversation(query, symptoms, imageBase64);
+          
+          // Navigate to the search page with the conversation ID
+          setLocation(`/search/${conversation.id}`);
+        };
+        reader.readAsDataURL(image);
+      } else {
+        // Create a new conversation with just the query and symptoms
+        const conversation = createNewConversation(query, symptoms);
+        
+        // Navigate to the search page with the conversation ID
+        setLocation(`/search/${conversation.id}`);
       }
-      
-      // Navigate to search page with query
-      setLocation(`/search?q=${encodeURIComponent(query.trim())}`);
     }
   };
 

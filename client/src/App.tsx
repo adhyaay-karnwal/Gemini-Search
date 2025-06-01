@@ -4,18 +4,31 @@ import { Search } from "@/pages/Search";
 import { Card, CardContent } from "@/components/ui/card";
 import { AlertCircle } from "lucide-react";
 import { AnimatePresence } from "framer-motion";
+import { ConversationsProvider } from "@/context/ConversationsProvider";
+import { ConversationSidebar } from "@/components/ConversationSidebar";
 
 function App() {
   const [location] = useLocation();
 
   return (
-    <AnimatePresence mode="wait">
-      <Switch location={location} key={location}>
-        <Route path="/" component={Home} />
-        <Route path="/search" component={Search} />
-        <Route component={NotFound} />
-      </Switch>
-    </AnimatePresence>
+    <ConversationsProvider>
+      <div className="flex h-screen overflow-hidden">
+        {/* Conversation Sidebar */}
+        <ConversationSidebar />
+        
+        {/* Main Content */}
+        <div className="flex-1 overflow-y-auto">
+          <AnimatePresence mode="wait">
+            <Switch location={location} key={location}>
+              <Route path="/" component={Home} />
+              <Route path="/search" component={Search} />
+              <Route path="/search/:id" component={Search} />
+              <Route component={NotFound} />
+            </Switch>
+          </AnimatePresence>
+        </div>
+      </div>
+    </ConversationsProvider>
   );
 }
 

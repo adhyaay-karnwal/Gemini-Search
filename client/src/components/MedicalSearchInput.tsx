@@ -3,6 +3,7 @@ import { Search, Image, Stethoscope, Send, X } from 'lucide-react';
 import { SymptomSelector } from './SymptomSelector';
 import { ImageAttachment } from './ImageAttachment';
 import { SelectedSymptoms } from './SelectedSymptoms';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface MedicalSearchInputProps {
   onSearch: (query: string, symptoms: string[], image?: File | null) => void;
@@ -26,6 +27,12 @@ export function MedicalSearchInput({
   const [attachedImage, setAttachedImage] = useState<File | null>(null);
   const [showSymptomSelector, setShowSymptomSelector] = useState(false);
   const [showImageAttachment, setShowImageAttachment] = useState(false);
+  
+  // State for hover animations (only on landing page)
+  const [hoveredIcon, setHoveredIcon] = useState<'symptoms' | 'image' | null>(null);
+  
+  // Determine if we're on the landing page (using autoFocus as a signal)
+  const isLandingPage = autoFocus;
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -74,27 +81,105 @@ export function MedicalSearchInput({
           />
           
           <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
-            <button 
-              type="button"
-              onClick={() => setShowSymptomSelector(true)}
-              className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 
-                       transition-all duration-300 text-gray-500 dark:text-gray-400"
-              aria-label="Select symptoms"
-              disabled={disabled}
-            >
-              <Stethoscope className="w-5 h-5" />
-            </button>
+            <div className="relative">
+              {isLandingPage ? (
+                <motion.div 
+                  className="relative z-10"
+                  onMouseEnter={() => setHoveredIcon('symptoms')}
+                  onMouseLeave={() => setHoveredIcon(null)}
+                >
+                  <AnimatePresence>
+                    {hoveredIcon === 'symptoms' ? (
+                      <motion.button
+                        type="button"
+                        onClick={() => setShowSymptomSelector(true)}
+                        className="pl-2 pr-3 py-2 rounded-full bg-primary/10 text-primary
+                                flex items-center gap-2 transition-all duration-300"
+                        initial={{ width: 40, opacity: 0 }}
+                        animate={{ width: 'auto', opacity: 1 }}
+                        exit={{ width: 40, opacity: 0 }}
+                        disabled={disabled}
+                      >
+                        <Stethoscope className="w-5 h-5 flex-shrink-0" />
+                        <span className="text-sm whitespace-nowrap">Select symptoms</span>
+                      </motion.button>
+                    ) : (
+                      <motion.button 
+                        type="button"
+                        onClick={() => setShowSymptomSelector(true)}
+                        className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 
+                                transition-all duration-300 text-gray-500 dark:text-gray-400"
+                        aria-label="Select symptoms"
+                        disabled={disabled}
+                      >
+                        <Stethoscope className="w-5 h-5" />
+                      </motion.button>
+                    )}
+                  </AnimatePresence>
+                </motion.div>
+              ) : (
+                <button 
+                  type="button"
+                  onClick={() => setShowSymptomSelector(true)}
+                  className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 
+                           transition-all duration-300 text-gray-500 dark:text-gray-400"
+                  aria-label="Select symptoms"
+                  disabled={disabled}
+                >
+                  <Stethoscope className="w-5 h-5" />
+                </button>
+              )}
+            </div>
             
-            <button 
-              type="button"
-              onClick={() => setShowImageAttachment(true)}
-              className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 
-                       transition-all duration-300 text-gray-500 dark:text-gray-400"
-              aria-label="Attach image"
-              disabled={disabled}
-            >
-              <Image className="w-5 h-5" />
-            </button>
+            <div className="relative">
+              {isLandingPage ? (
+                <motion.div 
+                  className="relative z-10"
+                  onMouseEnter={() => setHoveredIcon('image')}
+                  onMouseLeave={() => setHoveredIcon(null)}
+                >
+                  <AnimatePresence>
+                    {hoveredIcon === 'image' ? (
+                      <motion.button
+                        type="button"
+                        onClick={() => setShowImageAttachment(true)}
+                        className="pl-2 pr-3 py-2 rounded-full bg-primary/10 text-primary
+                                flex items-center gap-2 transition-all duration-300"
+                        initial={{ width: 40, opacity: 0 }}
+                        animate={{ width: 'auto', opacity: 1 }}
+                        exit={{ width: 40, opacity: 0 }}
+                        disabled={disabled}
+                      >
+                        <Image className="w-5 h-5 flex-shrink-0" />
+                        <span className="text-sm whitespace-nowrap">Upload a picture</span>
+                      </motion.button>
+                    ) : (
+                      <motion.button 
+                        type="button"
+                        onClick={() => setShowImageAttachment(true)}
+                        className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 
+                                transition-all duration-300 text-gray-500 dark:text-gray-400"
+                        aria-label="Attach image"
+                        disabled={disabled}
+                      >
+                        <Image className="w-5 h-5" />
+                      </motion.button>
+                    )}
+                  </AnimatePresence>
+                </motion.div>
+              ) : (
+                <button 
+                  type="button"
+                  onClick={() => setShowImageAttachment(true)}
+                  className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 
+                           transition-all duration-300 text-gray-500 dark:text-gray-400"
+                  aria-label="Attach image"
+                  disabled={disabled}
+                >
+                  <Image className="w-5 h-5" />
+                </button>
+              )}
+            </div>
             
             <button 
               type="submit"
